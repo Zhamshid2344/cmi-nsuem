@@ -241,6 +241,11 @@
 </div>
 
 <script>
+	function linkify(text) {
+    const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+    return text.replace(urlPattern, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+}
+
     let eventsList = [];
 
     // Твоя новая опубликованная ссылка (с принудительным выводом в CSV)
@@ -258,14 +263,17 @@
                     // Важно: названия полей (title, type и т.д.) должны совпадать с заголовками в таблице
                     if (!row.title && !row.Title) return null;
 
-                    let eventObj = {
-                        id: "event_" + index,
-                        type: (row.type && row.type.trim().toLowerCase() === 'vk') ? 'vk' : 'standard',
-                        title: row.title || row.Title || 'Без названия',
-                        date: row.date || row.Date || '',
-                        description: row.description || row.Description || '',
-                        imageUrl: row.imageUrl || row.ImageUrl || ''
-                    };
+					let rawDescription = row.description || row.Description || '';
+
+					let eventObj = {
+						id: "event_" + index,
+						type: (row.type && row.type.trim().toLowerCase() === 'vk') ? 'vk' : 'standard',
+						title: row.title || row.Title || 'Без названия',
+						date: row.date || row.Date || '',
+						// Применяем функцию здесь:
+						description: linkify(rawDescription),
+						imageUrl: row.imageUrl || row.ImageUrl || ''
+					};
 
                     if (eventObj.type === 'vk') {
                         eventObj.id = `vk_post_${index}`; // Упростили ID для виджета
