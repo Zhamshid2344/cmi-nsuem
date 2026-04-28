@@ -264,15 +264,18 @@
                     if (!row.title && !row.Title) return null;
 
 					let rawDescription = row.description || row.Description || '';
-
+					
+					// 1. Сначала меняем переносы строк на <br>
+					// 2. Затем (по желанию) прогоняем через linkify, который мы сделали раньше
+					let formattedDescription = rawDescription.replace(/\n/g, '<br>');
+					
 					let eventObj = {
-						id: "event_" + index,
-						type: (row.type && row.type.trim().toLowerCase() === 'vk') ? 'vk' : 'standard',
-						title: row.title || row.Title || 'Без названия',
-						date: row.date || row.Date || '',
-						// Применяем функцию здесь:
-						description: linkify(rawDescription),
-						imageUrl: row.imageUrl || row.ImageUrl || ''
+					    id: "event_" + index,
+					    type: (row.type && row.type.trim().toLowerCase() === 'vk') ? 'vk' : 'standard',
+					    title: row.title || row.Title || 'Без названия',
+					    date: row.date || row.Date || '',
+					    description: linkify(formattedDescription), // Теперь тут и ссылки, и переносы
+					    imageUrl: row.imageUrl || row.ImageUrl || ''
 					};
 
                     if (eventObj.type === 'vk') {
