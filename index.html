@@ -181,8 +181,8 @@
     <div class="tabs-container">
         <div class="logo-area">
             <div class="logo">
-                <img src="https://nsuem.ru/local/assets/images/logo.png" alt="Лого">
-                <span>| Центр молодежных инициатив</span>
+                <img src="https://nsuem.ru/local/assets/images/logo.png" alt="Логотип НГУЭУ">
+                <span>| Центр молодёжных инициатив</span>
             </div>
             <div class="tabs-buttons">
                 <button class="tab-btn active" data-tab="home">Главная</button>
@@ -195,50 +195,90 @@
 
 <div class="content-wrapper">
     <div id="home" class="tab-content active-content">
-        <div class="section-title">Добро пожаловать в ЦМИ</div>
-        <p style="margin-bottom: 20px; font-size: 1.1rem;">Центр молодежных инициатив — это структурное подразделение Университета, занимающееся развитием студенческой молодежи и студенческих объединений.</p>
-        
-        <div class="info-grid">
-            <div class="info-card">
-                <h4><i class="fas fa-bullseye"></i> Наша миссия</h4>
-                <p>Мы создаем условия для самореализации студентов, координируем работу студенческих организаций.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 40px; align-items: center;">
+            <div style="flex: 1.2;">
+                <div class="section-title">Центр молодёжных инициатив НГУЭУ</div>
+                <div class="section-sub" style="border-left: none; padding-left: 0;">
+                    <p><strong>ЦМИ</strong> — это структурное подразделение университета, занимающееся развитием студенческой молодежи и студенческих объединений, а также поддержкой их инициатив в различных сферах: добровольчество, творчество, наука, проектная деятельность, медиа, спорт, патриотическое воспитание и иные.</p>
+                    <p style="margin-top: 15px;">Мы создаем условия для самореализации студентов, координируем работу студенческих организаций и реализуем программы, направленные на развитие студенческой молодежи.</p>
+                </div>
+                <button class="tab-btn" id="heroToContacts" style="background: #5993c5; color: white; padding: 12px 28px; margin-top: 10px;">Присоединиться к ЦМИ →</button>
             </div>
-            <div class="info-card">
-                <h4><i class="fas fa-star"></i> Сферы поддержки</h4>
-                <ul>
-                    <li>Добровольчество</li>
-                    <li>Творчество и наука</li>
-                    <li>Медиа и спорт</li>
-                </ul>
+            <div style="flex: 1; background: #f8fafc; border-radius: 28px; padding: 30px; text-align: center; border: 1px solid #eef2ff;">
+                <i class="fas fa-users" style="font-size: 3rem; color: #5993c5;"></i>
+                <h3 style="margin-top: 15px; color: #1e293b;">Развитие и поддержка</h3>
+                <p style="color: #5b6e8c;">Формирование индивидуальных траекторий личностного развития студентов</p>
             </div>
         </div>
     </div>
 
     <div id="events" class="tab-content">
-        <div class="section-title">События</div>
+        <div class="section-title">Мероприятия и активности</div>
+        <div class="section-sub">ЦМИ реализует программы по направлениям: добровольчество, проектная деятельность, медиа, спорт, патриотическое воспитание и другие</div>
+
         <div class="events-grid" id="eventsGrid">
-            <div class="loader"><i class="fas fa-spinner fa-spin"></i> Загрузка</div>
-        </div>
+            </div>
     </div>
 
     <div id="contacts" class="tab-content">
-        <div class="section-title">Контакты</div>
-        <div class="info-grid">
-            <div class="info-card">
-                <h4><i class="fas fa-users"></i> Руководство</h4>
-                <p>Проректор: Обуховский Д.А.</p>
-                <p>Руководитель: Холкина Т.А.</p>
+        <div class="section-title">О Центре и команда</div>
+        <div class="section-sub">ЦМИ НГУЭУ решает задачи по адаптации студентов 1-2 курсов и подготовке к карьерному пути студентов старших курсов.</div>
+        
+        <div class="stats-row">
+            <div><strong>Ключевые направления:</strong><br>Адаптация, социализация, карьерный путь, социальный капитал</div>
+            <div><strong>Основные функции:</strong><br>Развитие студенческого самоуправления, поддержка волонтерства, координация студенческих отрядов</div>
+        </div>
+
+        <div class="section-title" style="font-size: 1.4rem; margin-top: 20px;">Руководство и структура</div>
+        <div class="team-grid">
+            <div class="team-card">
+                <i class="fas fa-user-tie"></i>
+                <h3>Татьяна Александровна Холкина</h3>
+                <p>Руководитель ЦМИ</p>
+                <div class="contact-links">
+                    <a href="#"><i class="fab fa-vk"></i> vk/holkina</a><br>
+                    <a href="mailto:t.a.holkina@nsuem.ru">t.a.holkina@nsuem.ru</a>
+                </div>
             </div>
+            <div class="team-card">
+                <i class="fas fa-user-graduate"></i>
+                <h3>Проректор по молодежной политике</h3>
+                <p>Обуховский Д.А.</p>
+                <div class="contact-links">
+                
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title" style="font-size: 1.4rem; margin-top: 40px;">Контакты и реквизиты</div>
+        <div style="text-align: center; margin: 20px 0;">
+            <p><i class="fas fa-map-marker-alt" style="color:#5993c5; width: 30px;"></i> г. Новосибирск, ул. Каменская, 56</p>
+            <p><i class="fas fa-envelope" style="color:#5993c5; width: 30px;"></i> cmi@nsuem.ru</p>
+            <p><i class="fas fa-phone" style="color:#5993c5; width: 30px;"></i> +7 (383) 123-45-67 (каб. 121/3)</p>
+            <p><i class="fab fa-vk" style="color:#5993c5; width: 30px;"></i> <a href="https://vk.com/shso_nsuem" target="_blank" style="color:#5993c5;">vk.com/cmi_nsuem</a></p>
+        </div>
+        <div class="stats-row" style="background: #f0f7ff; margin-top: 10px;">
+            <div><strong>Часы работы:</strong> Пн–Пт 10:00 – 18:00</div>
+            <div><strong>Кабинет:</strong> 3-121/3</div>
+            <div><strong>Статус:</strong> Структурное подразделение НГУЭУ</div>
         </div>
     </div>
 </div>
 
 <div id="eventModal" class="modal">
     <div class="modal-content">
+        <span class="modal-close">&times;</span>
         <div id="modalBody"></div>
-        <button class="footer-btn" onclick="closeModalFunc()">Закрыть</button>
     </div>
 </div>
+
+<footer>
+    <div class="social-icons">
+        <i class="fab fa-vk"></i>
+    </div>
+    <p style="margin-top: 20px;">© 2025 Центр молодежных инициатив НГУЭУ — структурное подразделение университета</p>
+    <p><small>Документ: ПЛ СМК НГУЭУ 5.5.0-187.01-2025 «Положение о центре молодежных инициатив»</small></p>
+</footer>
 
 <script>
 	function linkify(text) {
