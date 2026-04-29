@@ -62,6 +62,18 @@
             color: #1e293b; border-left: 5px solid #5993c5; padding-left: 20px;
         }
 
+        /* Фильтры мероприятий */
+        .filters-container {
+            display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px;
+        }
+        .filter-btn {
+            background: #f0f7ff; border: 1px solid #eef2ff; padding: 8px 20px;
+            font-size: 0.95rem; font-weight: 600; border-radius: 20px;
+            cursor: pointer; transition: all 0.2s ease; color: #5993c5; font-family: inherit;
+        }
+        .filter-btn:hover { background: #e0f0ff; }
+        .filter-btn.active { background: #5993c5; color: #FFFFFF; border-color: #5993c5; }
+
         /* Сетка мероприятий */
         .events-grid { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; }
         .event-card {
@@ -93,7 +105,11 @@
         .event-info h3 { font-size: 1.2rem; margin-bottom: 8px; color: #1e293b; }
         .event-date-badge {
             display: inline-block; background: #f0f7ff; padding: 4px 12px;
-            border-radius: 20px; font-size: 0.75rem; font-weight: 600; color: #5993c5; margin-bottom: 12px;
+            border-radius: 20px; font-size: 0.75rem; font-weight: 600; color: #5993c5; margin-bottom: 12px; margin-right: 5px;
+        }
+        .event-category-badge {
+            display: inline-block; background: #e0f2fe; padding: 4px 12px;
+            border-radius: 20px; font-size: 0.75rem; font-weight: 600; color: #0284c7; margin-bottom: 12px;
         }
 
         /* Карточки информации */
@@ -166,14 +182,10 @@
             font-weight: 500; width: 100%; margin-top: 15px; cursor: pointer; font-family: inherit;
         }
 
-        .loader {
-            text-align: center; font-size: 1.2rem; color: #5993c5; padding: 40px;
-            width: 100%; font-weight: 600;
-        }
-
         @media (max-width: 768px) {
             .tab-content { padding: 30px 20px; }
             .logo-area { flex-direction: column; align-items: flex-start; }
+            .filters-container { justify-content: center; }
         }
 		.podval {
 			    display: inline-flex;
@@ -254,6 +266,9 @@
 
     <div id="events" class="tab-content">
         <div class="section-title">Мероприятия</div>
+        
+        <div class="filters-container" id="filtersContainer"></div>
+
         <div class="events-grid" id="eventsGrid"></div>
     </div>
 
@@ -266,7 +281,7 @@
                 <h4><i class="fas fa-users"></i> Руководство</h4>
                 <p><strong>Проректор по молодежной политике:</strong> Обуховский Д.А. </p>
                 <p><strong>Руководитель центра молодежных инициатив:</strong> Холкина Т.А. </p>
-				<a href="https://www.sheet2site.com/showcase/" color="grey">https://vk.com/zzzzzhaba<a>
+				<a href="https://vk.com/zzzzzhaba" style="color: grey;">https://vk.com/zzzzzhaba</a>
             </div>
             <div class="info-card">
                 <h4><i class="fas fa-tasks"></i> Основные функции</h4>
@@ -298,7 +313,7 @@
     <div class="footer-container" style="max-width: 1280px; margin: 0 auto;">
         <div class="social-links" style="margin-bottom: 25px;">
             <a href="https://vk.com/shso_nsuem" target="_blank" class="podval"
-			 " onmouseover="this.style.background='#5993c5'; this.style.color='#ffffff'" 
+			 onmouseover="this.style.background='#5993c5'; this.style.color='#ffffff'" 
                onmouseout="this.style.background='#f0f7ff'; this.style.color='#5993c5'">
                 <i class="fab fa-vk"></i>
             </a>
@@ -316,31 +331,27 @@
 
 <script>
 	function linkify(text) {
-    const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-    return text.replace(urlPattern, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
-}
+        const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+        return text.replace(urlPattern, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+    }
 
     let eventsList = [];
+    let currentFilter = 'all'; // Текущий активный фильтр
 
-    // Твоя новая опубликованная ссылка (с принудительным выводом в CSV)
     const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRyGHknDr0qNORagEw04nkEy2dK3TQsVw6JHIIpFJxqBEGIBX8q81MSs2rIKfyTg418-fPggW27wmUa/pub?output=csv';
 
     function loadEventsFromSheet() {
         Papa.parse(CSV_URL, {
             download: true,
             header: true, 
-            skipEmptyLines: true, // Пропускаем пустые строки, если они есть
+            skipEmptyLines: true, 
             complete: function(results) {
                 const data = results.data;
                 
                 eventsList = data.map((row, index) => {
-                    // Важно: названия полей (title, type и т.д.) должны совпадать с заголовками в таблице
                     if (!row.title && !row.Title) return null;
 
 					let rawDescription = row.description || row.Description || '';
-					
-					// 1. Сначала меняем переносы строк на <br>
-					// 2. Затем (по желанию) прогоняем через linkify, который мы сделали раньше
 					let formattedDescription = rawDescription.replace(/\n/g, '<br>');
 					
 					let eventObj = {
@@ -348,12 +359,14 @@
 					    type: (row.type && row.type.trim().toLowerCase() === 'vk') ? 'vk' : 'standard',
 					    title: row.title || row.Title || 'Без названия',
 					    date: row.date || row.Date || '',
-					    description: linkify(formattedDescription), // Теперь тут и ссылки, и переносы
-					    imageUrl: row.imageUrl || row.ImageUrl || ''
+					    description: linkify(formattedDescription), 
+					    imageUrl: row.imageUrl || row.ImageUrl || '',
+                        // Подтягиваем категорию из новой колонки
+                        category: row.category || row.Category || row['Категория'] || ''
 					};
 
                     if (eventObj.type === 'vk') {
-                        eventObj.id = `vk_post_${index}`; // Упростили ID для виджета
+                        eventObj.id = `vk_post_${index}`;
                         eventObj.vkParams = {
                             container: eventObj.id,
                             ownerId: parseInt(row.vkOwnerId),
@@ -364,7 +377,8 @@
                     return eventObj;
                 }).filter(e => e !== null);
 
-                renderEvents();
+                generateFilters(); // Создаем кнопки
+                renderEvents();    // Отрисовываем карточки
             },
             error: function(error) {
                 console.error("Ошибка:", error);
@@ -373,14 +387,57 @@
         });
     }
 
-    function renderEvents() {
-        const grid = document.getElementById('eventsGrid');
-        if(eventsList.length === 0) {
-            grid.innerHTML = '<div style="text-align:center; width:100%;">Мероприятий не найдено.</div>';
+    function generateFilters() {
+        const filterContainer = document.getElementById('filtersContainer');
+        if (!filterContainer) return;
+
+        // Собираем все уникальные категории из мероприятий
+        const categories = new Set();
+        eventsList.forEach(e => {
+            if (e.category && e.category.trim() !== '') {
+                // Если указано несколько категорий через запятую (например: "Спорт, Наука")
+                e.category.split(',').forEach(cat => categories.add(cat.trim()));
+            }
+        });
+
+        // Если категорий нет, прячем блок с фильтрами
+        if (categories.size === 0) {
+            filterContainer.style.display = 'none';
             return;
         }
 
-        grid.innerHTML = eventsList.map(e => `
+        // Формируем HTML кнопок
+        let html = `<button class="filter-btn active" data-filter="all">Все</button>`;
+        categories.forEach(cat => {
+            html += `<button class="filter-btn" data-filter="${cat}">${cat}</button>`;
+        });
+        filterContainer.innerHTML = html;
+
+        // Вешаем логику на клики
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                renderEvents();
+            });
+        });
+    }
+
+    function renderEvents() {
+        const grid = document.getElementById('eventsGrid');
+        
+        // Фильтруем массив перед отрисовкой
+        const filteredEvents = currentFilter === 'all' 
+            ? eventsList 
+            : eventsList.filter(e => e.category && e.category.includes(currentFilter));
+
+        if(filteredEvents.length === 0) {
+            grid.innerHTML = '<div style="text-align:center; width:100%; color: #64748b; padding: 20px;">В этой категории пока нет мероприятий.</div>';
+            return;
+        }
+
+        grid.innerHTML = filteredEvents.map(e => `
             <div class="event-card" onclick="openModal('${e.id}')">
                 <div class="event-img-wrapper" style="${e.imageUrl ? `background-image: url('${e.imageUrl}');` : ''}">
                     ${!e.imageUrl ? '<i class="fas fa-calendar-alt" style="font-size:3rem; color:#fff;"></i>' : ''}
@@ -388,6 +445,7 @@
                 </div>
                 <div class="event-info">
                     <span class="event-date-badge">${e.date}</span>
+                    ${e.category ? `<span class="event-category-badge">${e.category.split(',')[0]}</span>` : ''}
                     <h3>${e.title}</h3>
                 </div>
             </div>
@@ -401,7 +459,6 @@
         if (event.type === 'vk') {
             body.innerHTML = `<div id="${event.id}" style="margin: 0 auto;"></div>`;
             if (window.VK && VK.Widgets && VK.Widgets.Post) {
-                // Маленькая задержка, чтобы DOM успел обновиться
                 setTimeout(() => {
                     VK.Widgets.Post(event.id, event.vkParams.ownerId, event.vkParams.postId, event.vkParams.hash);
                 }, 100);
@@ -432,7 +489,6 @@
         document.getElementById('modalBody').innerHTML = '';
     }
 
-    // Переключение табов
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.onclick = () => {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
