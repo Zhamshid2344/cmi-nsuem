@@ -407,7 +407,7 @@
         }
 
         // Формируем HTML кнопок
-        let html = `<button class="filter-btn active" data-filter="all">Все</button>`;
+        let html = `<button class="filter-btn active" style="font-size: 20px;" data-filter="all">Все</button>`;
         categories.forEach(cat => {
             html += `<button class="filter-btn" data-filter="${cat}">${cat}</button>`;
         });
