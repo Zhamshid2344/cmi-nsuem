@@ -268,9 +268,28 @@
             border-radius: 50%; font-size: 1.5rem; transition: all 0.3s ease; text-decoration: none;
 		}
 
-@media (max-width: 768px) {
+		@media (max-width: 768px) {
+            .tab-content { padding: 30px 20px; }
+            .logo-area { align-items: center; } /* Оставляем элементы по центру */
+            .filters-container { justify-content: center; }
+            .slider-wrapper { height: 300px; }
+            .slide-title { font-size: 1.5rem; }
+            .slide-content { padding: 24px; }
+        }
+		
+		.tabs-header {
+			position: sticky;
+			top: 0;
+			z-index: 1000;
+		}
 
-	    .tabs-header {
+		.mobile-menu-btn {
+			display: none;
+		}
+
+		@media (max-width: 768px) {
+
+    .tabs-header {
         position: sticky;
         top: 0;
         z-index: 1000;
@@ -330,27 +349,25 @@
 
         position: absolute;
 
-        top: calc(100% + 8px);
-
-        left: 50%;
-        transform: translateX(-50%) translateY(-10px);
-
-        width: calc(100% - 40px);
-        max-width: 340px;
+        top: 100%;
+        left: 0;
+        right: 0;
 
         display: flex;
         flex-direction: column;
 
         background: #5993c5;
 
-        padding: 10px;
+        padding: 0 0 12px 0;
 
-        border-radius: 20px;
+        border-radius: 0 0 20px 20px;
 
         overflow: hidden;
 
         opacity: 0;
         visibility: hidden;
+
+        transform: translateY(-10px);
 
         transition:
             opacity 0.25s ease,
@@ -360,21 +377,25 @@
         pointer-events: none;
 
         box-shadow:
-            0 12px 30px rgba(0,0,0,0.14);
+            0 12px 30px rgba(0,0,0,0.12);
     }
 
     .tabs-buttons .tab-btn {
 
-        width: 100%;
+		width: 100%;
 
-        text-align: center;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 
-        padding: 14px 18px;
+		text-align: center;
 
-        border-radius: 14px;
+		padding: 14px 18px;
 
-        margin: 0;
-    }
+		border-radius: 0;
+
+		margin: 0;
+	}
 
     .tabs-buttons.mobile-open {
 
@@ -382,7 +403,7 @@
 
         visibility: visible;
 
-        transform: translateX(-50%) translateY(0);
+        transform: translateY(0);
 
         pointer-events: auto;
     }
@@ -1044,6 +1065,38 @@ function renderFavorites() {
 				icon.classList.add('fa-bars');
 			}
 		});
+	});
+	
+	let lastScrollTop = 0;
+
+	const header = document.querySelector('.tabs-header');
+
+	window.addEventListener('scroll', () => {
+
+		const currentScroll =
+			window.pageYOffset ||
+			document.documentElement.scrollTop;
+
+		/* наверху страницы всегда показываем */
+		if (currentScroll <= 10) {
+
+			header.classList.remove('header-hidden');
+
+			return;
+		}
+
+		/* скролл вниз */
+		if (currentScroll > lastScrollTop) {
+
+			header.classList.add('header-hidden');
+
+		} else {
+
+			/* скролл вверх */
+			header.classList.remove('header-hidden');
+		}
+
+		lastScrollTop = currentScroll;
 	});
 </script>
 
