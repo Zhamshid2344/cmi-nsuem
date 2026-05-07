@@ -268,96 +268,125 @@
             border-radius: 50%; font-size: 1.5rem; transition: all 0.3s ease; text-decoration: none;
 		}
 
-		@media (max-width: 768px) {
-            .tab-content { padding: 30px 20px; }
-            .logo-area { align-items: center; } /* Оставляем элементы по центру */
-            .filters-container { justify-content: center; }
-            .slider-wrapper { height: 300px; }
-            .slide-title { font-size: 1.5rem; }
-            .slide-content { padding: 24px; }
-        }
-		
-		.tabs-header {
-			position: sticky;
-			top: 0;
-			z-index: 1000;
-		}
+@media (max-width: 768px) {
 
-		.mobile-menu-btn {
-			display: none;
-		}
+	    .tabs-header {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
 
-		@media (max-width: 768px) {
+    .tabs-container {
+        position: relative;
+    }
 
-			.logo-area {
-				flex-direction: column;
-				align-items: stretch;
-				gap: 12px;
-			}
+    .logo-area {
 
-			.top-mobile-row {
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				width: 100%;
-			}
+        position: relative;
 
-			.mobile-menu-btn {
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				width: 44px;
-				height: 44px;
-				border: none;
-				border-radius: 12px;
-				background: rgba(255,255,255,0.15);
-				color: white;
-				font-size: 1.2rem;
-				cursor: pointer;
-			}
+        display: flex;
+        flex-direction: column;
 
-			.tabs-buttons {
-				display: flex;
-				flex-direction: column;
-				width: 100%;
-				gap: 8px;
+        gap: 0;
 
-				overflow: hidden;
+        padding-bottom: 0;
 
-				max-height: 0;
-				opacity: 0;
+        flex-wrap: nowrap;
+    }
 
-				transform: translateY(-10px);
+    .top-mobile-row {
 
-				transition:
-					max-height 0.35s ease,
-					opacity 0.25s ease,
-					transform 0.25s ease,
-					padding-top 0.25s ease;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
 
-				pointer-events: none;
+        width: 100%;
+        min-height: 72px;
+    }
 
-				padding-top: 0;
-			}
+    .mobile-menu-btn {
 
-			.tabs-buttons.mobile-open {
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-				max-height: 500px;
+        width: 44px;
+        height: 44px;
 
-				opacity: 1;
+        border: none;
+        border-radius: 12px;
 
-				transform: translateY(0);
+        background: rgba(255,255,255,0.15);
 
-				pointer-events: auto;
+        color: white;
+        font-size: 1.2rem;
 
-				padding-top: 8px;
-			}
+        cursor: pointer;
 
-			.tab-btn {
-				width: 100%;
-				text-align: center;
-			}
-		}
+        flex-shrink: 0;
+    }
+
+    .tabs-buttons {
+
+        position: absolute;
+
+        top: calc(100% + 8px);
+
+        left: 50%;
+        transform: translateX(-50%) translateY(-10px);
+
+        width: calc(100% - 40px);
+        max-width: 340px;
+
+        display: flex;
+        flex-direction: column;
+
+        background: #5993c5;
+
+        padding: 10px;
+
+        border-radius: 20px;
+
+        overflow: hidden;
+
+        opacity: 0;
+        visibility: hidden;
+
+        transition:
+            opacity 0.25s ease,
+            transform 0.25s ease,
+            visibility 0.25s;
+
+        pointer-events: none;
+
+        box-shadow:
+            0 12px 30px rgba(0,0,0,0.14);
+    }
+
+    .tabs-buttons .tab-btn {
+
+        width: 100%;
+
+        text-align: center;
+
+        padding: 14px 18px;
+
+        border-radius: 14px;
+
+        margin: 0;
+    }
+
+    .tabs-buttons.mobile-open {
+
+        opacity: 1;
+
+        visibility: visible;
+
+        transform: translateX(-50%) translateY(0);
+
+        pointer-events: auto;
+    }
+}
     </style>
 </head>
 <body>
