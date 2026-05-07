@@ -186,6 +186,7 @@
         /* Сетка мероприятий */
         .events-grid { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; }
         .event-card {
+			position: relative;
             background: #FFFFFF; border-radius: 24px; padding: 0; flex: 1 1 300px; max-width: 400px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04); border: 1px solid #f0f6fa;
             transition: all 0.25s ease; overflow: hidden; cursor: pointer; display: flex; flex-direction: column;
@@ -276,6 +277,7 @@
             <div class="tabs-buttons">
                 <button class="tab-btn active" data-tab="home">Главная</button>
                 <button class="tab-btn" data-tab="events">Мероприятия</button>
+				<button class="tab-btn" data-tab="favorites">Избранное</button>
 				<button class="tab-btn" data-tab="about">О нас</button>
                 <button class="tab-btn" data-tab="contacts">Контакты</button>
             </div>
@@ -318,6 +320,20 @@
             </div>
         </div>
     </div>
+	
+	<div id="favorites" class="tab-content">
+		<div class="section-title">Избранные мероприятия</div>
+
+		<p style="margin-bottom: 24px; color:#64748b;">
+			Здесь сохраняются мероприятия, которые ты добавил в избранное.
+		</p>
+
+		<div class="events-grid" id="favoritesGrid">
+			<div style="text-align:center; width:100%; padding:40px; color:#94a3b8;">
+				Пока нет избранных мероприятий
+			</div>
+		</div>
+	</div>	
 	
 	<div id="about" class="tab-content">
 
@@ -518,8 +534,9 @@
                 }).filter(e => e !== null);
 
                 generateFilters(); 
-                renderEvents();    
-                initSlider();      
+                renderEvents();
+				renderFavorites();
+				initSlider();     
             },
             error: function() {
                 document.getElementById('eventsGrid').innerHTML = '<div style="color:#ef4444; text-align:center; width:100%; padding:20px;">Не удалось загрузить данные. Проверьте ссылку на таблицу.</div>';
@@ -647,21 +664,53 @@
             return;
         }
 
-        grid.innerHTML = filteredEvents.map(e => `
-            <div class="event-card" onclick="openModal('${e.id}')">
-                <div class="event-img-wrapper" style="${e.imageUrl ? `background-image: url('${e.imageUrl}');` : ''}">
-                    ${!e.imageUrl ? '<i class="fas fa-calendar-alt" style="font-size:3rem; color:rgba(255,255,255,0.5);"></i>' : ''}
-                    ${e.type === 'vk' ? '<div class="vk-badge"><i class="fab fa-vk"></i></div>' : ''}
-                </div>
-                <div class="event-info">
-                    <div class="badges-wrap">
-                        <span class="event-date-badge">${e.date}</span>
-                        ${e.category ? `<span class="event-category-badge">${e.category.split(',')[0]}</span>` : ''}
-                    </div>
-                    <h3>${e.title}</h3>
-                </div>
-            </div>
-        `).join('');
+		grid.innerHTML = filteredEvents.map(e => `
+			<div class="event-card">
+
+				<div style="
+					position:absolute;
+					top:14px;
+					left:14px;
+					z-index:20;
+				">
+					<button
+						onclick="toggleFavorite(event, '${e.id}')"
+						class="favorite-btn"
+						data-id="${e.id}"
+						style="
+							width:38px;
+							height:38px;
+							border:none;
+							border-radius:50%;
+							background:rgba(255,255,255,0.95);
+							cursor:pointer;
+							box-shadow:0 4px 12px rgba(0,0,0,0.15);
+							font-size:1rem;
+							color:#f59e0b;
+						"
+					>
+						${isFavorite(e.id) ? '★' : '☆'}
+					</button>
+				</div>
+
+				<div onclick="openModal('${e.id}')">
+					<div class="event-img-wrapper" style="${e.imageUrl ? `background-image: url('${e.imageUrl}');` : ''}">
+						${!e.imageUrl ? '<i class="fas fa-calendar-alt" style="font-size:3rem; color:rgba(255,255,255,0.5);"></i>' : ''}
+						${e.type === 'vk' ? '<div class="vk-badge"><i class="fab fa-vk"></i></div>' : ''}
+					</div>
+
+					<div class="event-info">
+						<div class="badges-wrap">
+							<span class="event-date-badge">${e.date}</span>
+							${e.category ? `<span class="event-category-badge">${e.category.split(',')[0]}</span>` : ''}
+						</div>
+
+						<h3>${e.title}</h3>
+					</div>
+				</div>
+
+			</div>
+		`).join('');
     }
 
     function openModal(id) {
@@ -714,7 +763,104 @@
             document.getElementById(btn.dataset.tab).classList.add('active-content');
         }
     });
+	
+	function getFavorites() {
+    return JSON.parse(localStorage.getItem('favoriteEvents') || '[]');
+}
 
+function saveFavorites(favorites) {
+    localStorage.setItem('favoriteEvents', JSON.stringify(favorites));
+}
+
+function isFavorite(id) {
+    return getFavorites().includes(id);
+}
+
+function toggleFavorite(event, id) {
+
+    event.stopPropagation();
+
+    let favorites = getFavorites();
+
+    if (favorites.includes(id)) {
+        favorites = favorites.filter(f => f !== id);
+    } else {
+        favorites.push(id);
+    }
+
+    saveFavorites(favorites);
+
+    renderEvents();
+    renderFavorites();
+}
+
+function renderFavorites() {
+
+    const grid = document.getElementById('favoritesGrid');
+
+    if (!grid) return;
+
+    const favorites = getFavorites();
+
+    const favoriteEvents = eventsList.filter(e =>
+        favorites.includes(e.id)
+    );
+
+    if (favoriteEvents.length === 0) {
+        grid.innerHTML = `
+            <div style="
+                text-align:center;
+                width:100%;
+                padding:40px;
+                color:#94a3b8;
+            ">
+                Пока нет избранных мероприятий
+            </div>
+        `;
+        return;
+    }
+
+    grid.innerHTML = favoriteEvents.map(e => `
+			<div class="event-card" onclick="openModal('${e.id}')">
+
+				<div class="event-img-wrapper"
+					 style="${e.imageUrl ? `background-image:url('${e.imageUrl}')` : ''}">
+
+					<button
+						onclick="toggleFavorite(event, '${e.id}')"
+						style="
+							position:absolute;
+							top:14px;
+							left:14px;
+							width:38px;
+							height:38px;
+							border:none;
+							border-radius:50%;
+							background:#ffffff;
+							cursor:pointer;
+							z-index:10;
+							font-size:1rem;
+							color:#f59e0b;
+						"
+					>
+						★
+					</button>
+
+				</div>
+
+				<div class="event-info">
+
+					<div class="badges-wrap">
+						<span class="event-date-badge">${e.date}</span>
+					</div>
+
+					<h3>${e.title}</h3>
+
+				</div>
+
+			</div>
+		`).join('');
+	}
     loadEventsFromSheet();
 </script>
 
