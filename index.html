@@ -543,6 +543,17 @@
 			}
 		}
 		
+		@media (max-width: 1200px) {
+			.events-grid {
+				grid-template-columns: repeat(2, minmax(280px, 380px));
+			}
+		}
+
+		@media (max-width: 768px) {
+			.events-grid {
+				grid-template-columns: minmax(260px, 1fr);
+			}
+		}
     </style>
 </head>
 <body>
