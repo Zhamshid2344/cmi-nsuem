@@ -23,7 +23,7 @@
 			line-height: 1.5;
 			min-height: 100vh;
 
-			display: absolute;
+			display: flex;
 			flex-direction: column;
 		}
 
@@ -973,12 +973,22 @@
         const body = document.getElementById('modalBody');
         
         if (event.type === 'vk') {
-            body.innerHTML = `<div id="${event.id}" style="margin: 0 auto;"></div>`;
-            if (window.VK && VK.Widgets && VK.Widgets.Post) {
-                setTimeout(() => { 
-				
-				VK.Widgets.Post(event.id, event.vkParams.ownerId, event.vkParams.postId, event.vkParams.hash); }, 100);
-            }
+			body.innerHTML = `<div id="${event.id}" style="margin:0 auto;"></div>`;
+
+			if (window.VK && VK.Widgets && VK.Widgets.Post) {
+				setTimeout(() => {
+					body.innerHTML = ""; // очищаем старый контейнер
+					body.innerHTML = `<div id="${event.id}" style="margin:0 auto;"></div>`;
+
+					VK.Widgets.Post(
+						event.id,
+						event.vkParams.ownerId,
+						event.vkParams.postId,
+						event.vkParams.hash
+					);
+				}, 100);
+			}
+		}
         } else {
             body.innerHTML = `
                 <div class="vk-card-wrap">
