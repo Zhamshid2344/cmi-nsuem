@@ -23,7 +23,7 @@
 			line-height: 1.5;
 			min-height: 100vh;
 
-			display: flex;
+			display: absolute;
 			flex-direction: column;
 		}
 
@@ -972,13 +972,22 @@
         const event = eventsList.find(e => e.id === id);
         const body = document.getElementById('modalBody');
         
-        if (event.type === 'vk') {
-			body.innerHTML = `<div id="${event.id}" style="margin:0 auto;"></div>`;
+       if (event.type === 'vk') {
+
+			// Полностью очищаем модалку
+			body.innerHTML = '';
+
+			// Создаем новый контейнер
+			const vkContainer = document.createElement('div');
+
+			vkContainer.id = event.id;
+			vkContainer.style.margin = '0 auto';
+
+			body.appendChild(vkContainer);
 
 			if (window.VK && VK.Widgets && VK.Widgets.Post) {
+
 				setTimeout(() => {
-					body.innerHTML = ""; // очищаем старый контейнер
-					body.innerHTML = `<div id="${event.id}" style="margin:0 auto;"></div>`;
 
 					VK.Widgets.Post(
 						event.id,
@@ -986,9 +995,10 @@
 						event.vkParams.postId,
 						event.vkParams.hash
 					);
+
 				}, 100);
 			}
-		}
+
         } else {
             body.innerHTML = `
                 <div class="vk-card-wrap">
