@@ -989,8 +989,18 @@
 
 		saveFavorites(favorites);
 
-		renderEvents();
+		/* обновляем только избранное */
 		renderFavorites();
+
+		/* обновляем иконку без полной перерисовки */
+		const btn = document.querySelector(`.favorite-btn[data-id="${id}"]`);
+
+		if (btn) {
+
+			btn.innerHTML = exists
+				? '<i class="far fa-bookmark"></i>'
+				: '<i class="fas fa-bookmark"></i>';
+		}
 	}
 
 	function renderFavorites() {
