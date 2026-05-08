@@ -7,13 +7,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
-    <script type="text/javascript" src="https://vk.com/js/api/openapi.js?173"></script>
+    <script defer src="https://vk.com/js/api/openapi.js?173"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+	
 
+	
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; 
 			-webkit-tap-highlight-color: transparent;
 		}
+		
 		body {
 			font-family: 'Inter', sans-serif;
 			background-color: #f4f6f9;
@@ -21,9 +24,38 @@
 			line-height: 1.5;
 			min-height: 100vh;
 
-			display:flex;
+			display: flex;
 			flex-direction: column;
 		}
+		
+		.section-title {
+			font-size: 2rem;
+			font-weight: 700;
+			margin-bottom: 30px;
+			color: #1e293b;
+
+			text-align: center;
+
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 14px;
+		}
+
+		.section-title::before {
+			content: "";
+			width: 6px;
+			height: 32px;
+			border-radius: 10px;
+			background: #5993c5;
+		}
+		
+		#home p {
+			max-width: 900px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+		
 
 /* Шапка */
         .tabs-header {
@@ -34,12 +66,6 @@
             z-index: 100;
 			transition: transform 0.3s ease;
         }
-		
-		.header-hidden {
-			transform: translateY(-100%);
-			transition: transform 0.3s ease;
-		}
-
         .tabs-container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
         
         /* ВОЗВРАЩАЕМ ПРЕЖНИЙ ДИЗАЙН: Логотип слева, кнопки справа */
@@ -52,6 +78,11 @@
             gap: 16px;
         }
         
+		.header-hidden {
+			transform: translateY(-100%);
+			transition: transform 0.3s ease;
+		}
+		
         /* СТРОГОЕ ВЫРАВНИВАНИЕ ВСЕХ ЭЛЕМЕНТОВ ЛОГОТИПА ПО ОДНОЙ ЛИНИИ */
         .logo { 
             display: flex; 
@@ -92,12 +123,17 @@
             display: block;
             flex-shrink: 0;
         }
+		
+		.tabs-buttons {
+			display: flex;
 
-        .tabs-buttons { 
-            display: flex; 
-            gap: 8px; 
-            flex-wrap: wrap; 
-        }
+			justify-content: center;
+			align-items: center;
+
+			gap: 8px;
+
+			flex-wrap: wrap;
+}
         
         .tab-btn {
             background: transparent; border: none; padding: 10px 28px;
@@ -108,18 +144,27 @@
         .tab-btn.active { background: #FFFFFF; color: #5993c5; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); }
 
         /* Контент */
-        .content-wrapper {flex: 1;max-width: 1280px; margin: 0 auto; padding: 50px 24px 70px; }
-        .tab-content {
-            display: none; animation: fadeIn 0.4s ease; background: #FFFFFF;
-            border-radius: 28px; padding: 48px 40px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
-        }
+		.content-wrapper {
+			flex: 1;
+			max-width: 1280px;
+			margin: 0 auto;
+			padding: 50px 24px 70px;
+		}
+		.tab-content {
+			display: none;
+			animation: fadeIn 0.4s ease;
+			background: #FFFFFF;
+
+			border-radius: 28px;
+
+			padding: 48px 40px;
+
+			box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+
+			text-align: center;
+		}
         .tab-content.active-content { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .section-title {
-            font-size: 2rem; font-weight: 700; margin-bottom: 20px;
-            color: #1e293b; border-left: 5px solid #5993c5; padding-left: 20px;
-        }
 
         /* ---------------- СЛАЙДЕР НА ГЛАВНОЙ ---------------- */
         .slider-wrapper {
@@ -152,7 +197,10 @@
             transition: opacity 0.6s ease;
             background: #1e293b; z-index: 11;
         }
-        .hero-slider.loaded { opacity: 1; }
+		
+        .hero-slider.loaded { 
+		opacity: 1;
+		}
         
         .slider-track { display: flex; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
         .slide { min-width: 100%; height: 100%; background-size: cover; background-position: center; position: relative; display: flex; align-items: flex-end; }
@@ -194,13 +242,38 @@
         .filter-btn.active { background: #5993c5; color: #FFFFFF; box-shadow: 0 4px 10px rgba(89, 147, 197, 0.3); }
 
         /* Сетка мероприятий */
-        .events-grid { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; }
-        .event-card {
+		
+		.events-grid {
+			display: grid;
+
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+
+			gap: 28px;
+
+			width: 100%;
+		}
+		
+		.event-card {
 			position: relative;
-            background: #FFFFFF; border-radius: 24px; padding: 0; flex: 1 1 300px; max-width: 400px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04); border: 1px solid #f0f6fa;
-            transition: all 0.25s ease; overflow: hidden; cursor: pointer; display: flex; flex-direction: column;
-        }
+
+			width: 100%;
+			min-width: 0;
+
+			background: #FFFFFF;
+			border-radius: 24px;
+			padding: 0;
+
+			box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+			border: 1px solid #f0f6fa;
+
+			transition: all 0.25s ease;
+
+			overflow: hidden;
+			cursor: pointer;
+
+			display: flex;
+			flex-direction: column;
+		}
         .event-card:hover { transform: translateY(-6px); box-shadow: 0 15px 35px rgba(89, 147, 197, 0.12); border-color: #d1e3f2; }
         
         .event-img-wrapper { height: 180px; background-color: #5993c5; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; position: relative; }
@@ -241,17 +314,69 @@
         }
         @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.97) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 
-        .vk-card-wrap { background: #ffffff; border-radius: 16px; padding: 0; }
-        .vk-author-row { display: flex; align-items: center; margin-bottom: 16px; }
-        .vk-ava { width: 44px; height: 44px; border-radius: 50%; background: #5993c5; margin-right: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; }
-        .vk-name { color: #1e293b; font-weight: 700; font-size: 15px; }
-        .vk-subtext { color: #94a3b8; font-size: 13px; margin-top: 2px;}
-        .vk-text { font-size: 15px; color: #334155; line-height: 1.5; margin-bottom: 16px; }
-        .vk-img-main { width: 100%; border-radius: 12px; margin-top: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .vk-card-wrap { 
+		background: #ffffff; 
+		border-radius: 16px; 
+		padding: 0; 
+		}
+		
+        .vk-author-row { 
+		display: flex; 
+		align-items: center; 
+		margin-bottom: 16px;
+		}
+		
+        .vk-ava { 
+		width: 44px; 
+		height: 44px;
+		border-radius: 50%; 
+		background: #5993c5; 
+		margin-right: 12px; 
+		display: flex; 
+		align-items: center; 
+		justify-content: center; 
+		color: white; 
+		font-size: 1.2rem; 
+		}
+		
+        .vk-name { 
+		color: #1e293b; 
+		font-weight: 700;
+		font-size: 15px; 
+		}
+		
+        .vk-subtext { 
+		color: #94a3b8; 
+		font-size: 13px;
+		margin-top: 2px;
+		}
+		
+        .vk-text {
+		font-size: 15px; 
+		color: #334155; 
+		line-height: 1.5; 
+		margin-bottom: 16px; 
+		}
+		
+		.vk-img-main { 
+			width: 100%;
+			border-radius: 12px; 
+			margin-top: 10px;
+			box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+		}
 
         .footer-btn {
-            background: #f0f6fa; color: #5993c5; padding: 14px; border: none; border-radius: 12px;
-            font-weight: 600; width: 100%; margin-top: 20px; cursor: pointer; font-family: inherit; transition: all 0.2s;
+            background: #f0f6fa; 
+			color: #5993c5; 
+			padding: 14px; 
+			border: none; 
+			border-radius: 12px;
+            font-weight: 600;
+			width: 100%; 
+			margin-top: 20px; 
+			cursor: pointer; 
+			font-family: inherit; 
+			transition: all 0.2s;
         }
         .footer-btn:hover { background: #e1edf6; }
 
@@ -271,24 +396,17 @@
 		}
         
         .podval {
-			display: inline-flex; align-items: center; justify-content: center;
-            width: 50px; height: 50px; background: #f0f6fa; color: #5993c5;
-            border-radius: 50%; font-size: 1.5rem; transition: all 0.3s ease; text-decoration: none;
-		}
-
-		@media (max-width: 768px) {
-            .tab-content { padding: 30px 20px; }
-            .logo-area { align-items: center; } /* Оставляем элементы по центру */
-            .filters-container { justify-content: center; }
-            .slider-wrapper { height: 300px; }
-            .slide-title { font-size: 1.5rem; }
-            .slide-content { padding: 24px; }
-        }
-		
-		.tabs-header {
-			position: sticky;
-			top: 0;
-			z-index: 1000;
+			display: inline-flex;
+			align-items: center; 
+			justify-content: center;
+            width: 50px; 
+			height: 50px; 
+			background: #f0f6fa; 
+			color: #5993c5;
+            border-radius: 50%;
+			font-size: 1.5rem; 
+			transition: all 0.3s ease; 
+			text-decoration: none;
 		}
 
 		.mobile-menu-btn {
@@ -297,125 +415,160 @@
 
 		@media (max-width: 768px) {
 
-    .tabs-header {
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-    }
+			.tab-content {
+				padding: 30px 20px;
+			}
 
-    .tabs-container {
-        position: relative;
-    }
+			.filters-container {
+				justify-content: center;
+			}
 
-    .logo-area {
+			.slide-title {
+				font-size: 1.5rem;
+			}
 
-        position: relative;
+			.slide-content {
+				padding: 24px;
+			}
 
-        display: flex;
-        flex-direction: column;
+			.tabs-header {
+				will-change: transform;
+				position: sticky;
+				top: 0;
+				z-index: 1000;
+			}
 
-        gap: 0;
+			.tabs-container {
+				position: relative;
+			}
 
-        padding-bottom: 0;
+			.logo-area {
+				position: relative;
 
-        flex-wrap: nowrap;
-    }
+				display: flex;
+				flex-direction: column;
 
-    .top-mobile-row {
+				gap: 0;
 
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+				padding-bottom: 0;
 
-        width: 100%;
-        min-height: 72px;
-    }
+				flex-wrap: nowrap;
 
-    .mobile-menu-btn {
+				align-items: center;
+			}
 
-        display: flex;
-        align-items: center;
-        justify-content: center;
+			.top-mobile-row {
 
-        width: 44px;
-        height: 44px;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
 
-        border: none;
-        border-radius: 12px;
+				width: 100%;
+				min-height: 72px;
+			}
 
-        background: rgba(255,255,255,0.15);
+			.mobile-menu-btn {
 
-        color: white;
-        font-size: 1.2rem;
+				display: flex;
+				align-items: center;
+				justify-content: center;
 
-        cursor: pointer;
+				width: 44px;
+				height: 44px;
 
-        flex-shrink: 0;
-    }
+				border: none;
+				border-radius: 12px;
 
-    .tabs-buttons {
+				background: rgba(255,255,255,0.15);
 
-        position: absolute;
+				color: white;
+				font-size: 1.2rem;
 
-        top: 100%;
-        left: 0;
-        right: 0;
+				cursor: pointer;
 
-        display: flex;
-        flex-direction: column;
+				flex-shrink: 0;
+			}
 
-        background: #5993c5;
+			.tabs-buttons {
 
-        padding: 0 0 12px 0;
+				position: absolute;
 
-        border-radius: 0 0 20px 20px;
+				top: 100%;
+				left: 0;
+				right: 0;
 
-        overflow: hidden;
+				display: flex;
+				flex-direction: column;
 
-        opacity: 0;
-        visibility: hidden;
+				background: #5993c5;
 
-        transform: translateY(-10px);
+				padding: 0 0 12px 0;
 
-        transition:
-            opacity 0.25s ease,
-            transform 0.25s ease,
-            visibility 0.25s;
+				border-radius: 0 0 20px 20px;
 
-        pointer-events: none;
+				overflow: hidden;
 
-        box-shadow:
-            0 12px 30px rgba(0,0,0,0.12);
-    }
+				opacity: 0;
+				visibility: hidden;
 
-    .tabs-buttons .tab-btn {
+				transform: translateY(-10px);
 
-		width: 100%;
+				transition:
+					opacity 0.25s ease,
+					transform 0.25s ease;
 
-		display: flex;
-		align-items: center;
-		justify-content: center;
+				pointer-events: none;
 
-		text-align: center;
+				box-shadow:
+					0 12px 30px rgba(0,0,0,0.12);
+			}
 
-		padding: 14px 18px;
+			.tabs-buttons .tab-btn {
 
-		border-radius: 0;
+				width: 100%;
 
-		margin: 0;
-	}
+				display: flex;
+				align-items: center;
+				justify-content: center;
 
-    .tabs-buttons.mobile-open {
+				text-align: center;
 
-        opacity: 1;
+				padding: 14px 18px;
 
-        visibility: visible;
+				border-radius: 0;
 
-        transform: translateY(0);
+				margin: 0;
+			}
 
-        pointer-events: auto;
-    }
-}
+			.tabs-buttons.mobile-open {
+
+				opacity: 1;
+
+				visibility: visible;
+
+				transform: translateY(0);
+
+				pointer-events: auto;
+			}
+		}
+				
+		@media (max-width: 1100px) {
+
+			.events-grid {
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+			}
+		}
+
+		@media (max-width: 768px) {
+
+			.events-grid {
+				grid-template-columns: 1fr;
+			}
+
+			.event-card {
+				width: 100%;
+			}
+		}
     </style>
 </head>
 <body>
@@ -832,7 +985,10 @@
         
         const filteredEvents = currentFilter === 'all' 
             ? eventsList 
-            : eventsList.filter(e => e.category && e.category.includes(currentFilter));
+            : eventsList.filter(e => e.category && e.category
+													  .split(',')
+													  .map(c => c.trim())
+													  .includes(currentFilter));
 
         if(filteredEvents.length === 0) {
             grid.innerHTML = '<div style="text-align:center; width:100%; color: #94a3b8; padding: 40px; font-size:1.1rem;">В этой категории пока нет мероприятий.</div>';
@@ -849,7 +1005,7 @@
 					z-index:20;
 				">
 					<button
-						onclick="toggleFavorite(event, '${e.id}')"
+						onclick="toggleFavorite(arguments[0], '${e.id}')"
 						class="favorite-btn"
 						data-id="${e.id}"
 						style="
@@ -902,11 +1058,62 @@
         const event = eventsList.find(e => e.id === id);
         const body = document.getElementById('modalBody');
         
-        if (event.type === 'vk') {
-            body.innerHTML = `<div id="${event.id}" style="margin: 0 auto;"></div>`;
-            if (window.VK && VK.Widgets && VK.Widgets.Post) {
-                setTimeout(() => { VK.Widgets.Post(event.id, event.vkParams.ownerId, event.vkParams.postId, event.vkParams.hash); }, 100);
-            }
+       if (event.type === 'vk') {
+
+			// Полностью очищаем модалку
+			body.innerHTML = '';
+
+			// Создаем новый контейнер
+			const vkContainer = document.createElement('div');
+
+			vkContainer.id = event.id;
+			vkContainer.style.margin = '0 auto';
+
+			body.appendChild(vkContainer);
+
+			if (window.VK && VK.Widgets && VK.Widgets.Post) {
+
+				setTimeout(() => {
+
+					try {
+
+						VK.Widgets.Post(
+							event.id,
+							event.vkParams.ownerId,
+							event.vkParams.postId,
+							event.vkParams.hash
+						);
+
+					} catch (err) {
+
+						console.error('Ошибка VK Widget:', err);
+
+						body.innerHTML = `
+							<div style="
+								padding:40px;
+								text-align:center;
+								color:#64748b;
+							">
+								Не удалось загрузить пост VK
+							</div>
+						`;
+					}
+
+				}, 100);
+
+			} else {
+
+				body.innerHTML = `
+					<div style="
+						padding:40px;
+						text-align:center;
+						color:#64748b;
+					">
+						VK API не загрузился
+					</div>
+				`;
+			}
+
         } else {
             body.innerHTML = `
                 <div class="vk-card-wrap">
@@ -1147,6 +1354,14 @@
 		}
 
 		lastScrollTop = currentScroll;
+	});
+	
+	document.addEventListener('visibilitychange', () => {
+		if (document.hidden) {
+			clearInterval(slideInterval);
+		} else {
+			startSlideTimer();
+		}
 	});
 </script>
 
