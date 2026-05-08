@@ -673,11 +673,10 @@
 					    id: "event_" + index,
 						
 						contentHash: (
-							(row.title || row.Title || '') +
-							(row.date || row.Date || '') +
-							(row.description || row.Description || '') +
-							(row.imageUrl || row.ImageUrl || '')
-						),
+							row.title ||
+							row.Title ||
+							''
+						).trim(),
 												
 					    type: (row.type && row.type.trim().toLowerCase() === 'vk') ? 'vk' : 'standard',
 					    title: row.title || row.Title || 'Без названия',
