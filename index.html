@@ -977,8 +977,6 @@
             if (window.VK && VK.Widgets && VK.Widgets.Post) {
                 setTimeout(() => { 
 				
-				body.innerHTML = ``;
-				
 				VK.Widgets.Post(event.id, event.vkParams.ownerId, event.vkParams.postId, event.vkParams.hash); }, 100);
             }
         } else {
