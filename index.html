@@ -241,6 +241,9 @@
 			gap: 28px;
 
 			width: 100%;
+
+			justify-items: stretch;
+			align-items: stretch;
 		}
 		
 		.event-card {
@@ -1234,14 +1237,20 @@
 
     if (favoriteEvents.length === 0) {
         grid.innerHTML = `
-            <div style="
-                text-align:center;
-                width:100%;
-                padding:40px;
-                color:#94a3b8;
-            ">
-                Пока нет избранных мероприятий
-            </div>
+			<div style="
+				width:100%;
+				grid-column:1 / -1;
+
+				display:flex;
+				justify-content:center;
+				align-items:center;
+
+				min-height:220px;
+
+				color:#94a3b8;
+			">
+				Пока нет избранных мероприятий
+			</div>
         `;
         return;
     }
