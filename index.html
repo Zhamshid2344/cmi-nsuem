@@ -673,10 +673,10 @@
 					    id: "event_" + index,
 						
 						contentHash: (
-							(row.title || '') +
-							(row.date || '') +
-							(row.description || '') +
-							(row.imageUrl || '')
+							(row.title || row.Title || '') +
+							(row.date || row.Date || '') +
+							(row.description || row.Description || '') +
+							(row.imageUrl || row.ImageUrl || '')
 						),
 												
 					    type: (row.type && row.type.trim().toLowerCase() === 'vk') ? 'vk' : 'standard',
@@ -946,9 +946,9 @@
     return JSON.parse(localStorage.getItem('favoriteEvents') || '[]');
 }
 
-function saveFavorites(favorites) {
-    localStorage.setItem('favoriteEvents', JSON.stringify(favorites));
-}
+	function saveFavorites(favorites) {
+		localStorage.setItem('favoriteEvents', JSON.stringify(favorites));
+	}
 
 	function isFavorite(id) {
 
@@ -964,41 +964,50 @@ function saveFavorites(favorites) {
 		);
 	}
 
-function toggleFavorite(event, id) {
+	function toggleFavorite(clickEvent, id) {
 
-    event.stopPropagation();
+		clickEvent.stopPropagation();
 
-    let favorites = getFavorites();
+		let favorites = getFavorites();
 
-    if (favorites.includes(id)) {
-        favorites = favorites.filter(f => f !== id);
-    } else {
-        favorites.push({
-			id: id,
-			hash: event.contentHash
-		});
-    }
+		const eventObj = eventsList.find(e => e.id === id);
 
-    saveFavorites(favorites);
+		if (!eventObj) return;
 
-    renderEvents();
-    renderFavorites();
-}
+		const exists = favorites.some(f => f.id === id);
 
-function renderFavorites() {
+		if (exists) {
 
-    const grid = document.getElementById('favoritesGrid');
+			favorites = favorites.filter(f => f.id !== id);
 
-    if (!grid) return;
+		} else {
 
-    const favorites = getFavorites();
+			favorites.push({
+				id: id,
+				hash: eventObj.contentHash
+			});
+		}
 
-    const favoriteEvents = eventsList.filter(e =>
-        favorites.some(f =>
-			f.id === e.id &&
-			f.hash === e.contentHash
-		)
-    );
+		saveFavorites(favorites);
+
+		renderEvents();
+		renderFavorites();
+	}
+
+	function renderFavorites() {
+
+		const grid = document.getElementById('favoritesGrid');
+
+		if (!grid) return;
+
+		const favorites = getFavorites();
+
+		const favoriteEvents = eventsList.filter(e =>
+			favorites.some(f =>
+				f.id === e.id &&
+				f.hash === e.contentHash
+			)
+		);
 
     if (favoriteEvents.length === 0) {
         grid.innerHTML = `
