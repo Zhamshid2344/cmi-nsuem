@@ -24,11 +24,6 @@
 			line-height: 1.5;
 			min-height: 100vh;
 
-			font-family: 'Inter', sans-serif;
-			background-color: #f4f6f9;
-			color: #334155;
-			line-height: 1.5;
-			min-height: 100vh;
 		}
 		
 		.section-title {
@@ -138,7 +133,6 @@
 
         /* Контент */
 		.content-wrapper {
-			flex: 1;
 			max-width: 1280px;
 			margin: 0 auto;
 			padding: 50px 24px 70px;
@@ -810,6 +804,9 @@
                     if (!row.title && !row.Title) return null;
 
 					let rawDescription = row.description || row.Description || '';
+
+					rawDescription = escapeHtml(rawDescription);
+
 					let formattedDescription = rawDescription.replace(/\n/g, '<br>');
 					
                     let onMainVal = (row['На главном'] || row.on_main || '').toString().toLowerCase().trim();
@@ -1051,7 +1048,7 @@
 			// Создаем новый контейнер
 			const vkContainer = document.createElement('div');
 
-			vkContainer.id = event.id;
+			vkContainer.id = event.id + '_' + Date.now();
 			vkContainer.style.margin = '0 auto';
 
 			body.appendChild(vkContainer);
@@ -1113,7 +1110,7 @@
                         <h3 style="margin-bottom:12px; color:#1e293b; font-size:1.3rem;">${event.title}</h3>
                         ${event.description}
                     </div>
-                    ${event.imageUrl ? `<img src="${event.imageUrl}" class="vk-img-main">` : ''}
+                    ${event.imageUrl ? `<<img loading="lazy" src="${event.imageUrl}" class="vk-img-main">` : ''}
                 </div>
             `;
         }
@@ -1354,6 +1351,14 @@
 			startSlideTimer();
 		}
 	});
+	
+	function escapeHtml(text) {
+		const div = document.createElement('div');
+		div.innerText = text;
+		return div.innerHTML;
+	}
+	
+	
 </script>
 
 </body>
