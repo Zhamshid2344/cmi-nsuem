@@ -233,13 +233,16 @@
 		.events-grid {
 			display: grid;
 
-			gap: 28px;
+				grid-template-columns: repeat(3, minmax(320px, 380px));
 
-			width: 100%;
+				gap: 28px;
 
-			justify-items: stretch;
-			align-items: stretch;
-		}
+				width: 100%;
+
+				justify-content: center;
+				justify-items: stretch;
+				align-items: stretch;
+			}
 		
 		.event-card {
 			position: relative;
