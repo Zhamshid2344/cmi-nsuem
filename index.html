@@ -989,14 +989,43 @@
 
 				setTimeout(() => {
 
-					VK.Widgets.Post(
-						event.id,
-						event.vkParams.ownerId,
-						event.vkParams.postId,
-						event.vkParams.hash
-					);
+					try {
+
+						VK.Widgets.Post(
+							event.id,
+							event.vkParams.ownerId,
+							event.vkParams.postId,
+							event.vkParams.hash
+						);
+
+					} catch (err) {
+
+						console.error('Ошибка VK Widget:', err);
+
+						body.innerHTML = `
+							<div style="
+								padding:40px;
+								text-align:center;
+								color:#64748b;
+							">
+								Не удалось загрузить пост VK
+							</div>
+						`;
+					}
 
 				}, 100);
+
+			} else {
+
+				body.innerHTML = `
+					<div style="
+						padding:40px;
+						text-align:center;
+						color:#64748b;
+					">
+						VK API не загрузился
+					</div>
+				`;
 			}
 
         } else {
