@@ -671,6 +671,14 @@
 
 					let eventObj = {
 					    id: "event_" + index,
+						
+						contentHash: (
+							(row.title || '') +
+							(row.date || '') +
+							(row.description || '') +
+							(row.imageUrl || '')
+						),
+												
 					    type: (row.type && row.type.trim().toLowerCase() === 'vk') ? 'vk' : 'standard',
 					    title: row.title || row.Title || 'Без названия',
 					    date: row.date || row.Date || '',
@@ -942,9 +950,19 @@ function saveFavorites(favorites) {
     localStorage.setItem('favoriteEvents', JSON.stringify(favorites));
 }
 
-function isFavorite(id) {
-    return getFavorites().includes(id);
-}
+	function isFavorite(id) {
+
+		const eventObj = eventsList.find(e => e.id === id);
+
+		if (!eventObj) return false;
+
+		const favorites = getFavorites();
+
+		return favorites.some(f =>
+			f.id === id &&
+			f.hash === eventObj.contentHash
+		);
+	}
 
 function toggleFavorite(event, id) {
 
@@ -955,7 +973,10 @@ function toggleFavorite(event, id) {
     if (favorites.includes(id)) {
         favorites = favorites.filter(f => f !== id);
     } else {
-        favorites.push(id);
+        favorites.push({
+			id: id,
+			hash: event.contentHash
+		});
     }
 
     saveFavorites(favorites);
@@ -973,7 +994,10 @@ function renderFavorites() {
     const favorites = getFavorites();
 
     const favoriteEvents = eventsList.filter(e =>
-        favorites.includes(e.id)
+        favorites.some(f =>
+			f.id === e.id &&
+			f.hash === e.contentHash
+		)
     );
 
     if (favoriteEvents.length === 0) {
