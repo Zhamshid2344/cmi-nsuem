@@ -1047,18 +1047,50 @@
         const event = eventsList.find(e => e.id === id);
         const body = document.getElementById('modalBody');
         
-       if (event.type === 'vk') {
+		if (event.type === 'vk') {
 
-			// Полностью очищаем модалку
-			body.innerHTML = '';
+			// очищаем модалку
+			body.innerHTML = `
+				<div style="
+					display:flex;
+					justify-content:flex-end;
+					margin-bottom:12px;
+				">
+					<button
+						onclick="toggleFavorite(event, '${event.id}')"
+						class="favorite-btn"
+						data-id="${event.id}"
+						style="
+							height:42px;
+							padding:0 16px;
+							border:none;
+							border-radius:14px;
+							background:#f0f6fa;
+							cursor:pointer;
+							box-shadow:0 4px 12px rgba(0,0,0,0.08);
+							font-size:0.95rem;
+							color:#5993c5;
+							font-weight:700;
+							display:flex;
+							align-items:center;
+							justify-content:center;
+							gap:8px;
+						"
+					>
+						${isFavorite(event.id)
+							? '<i class="fas fa-bookmark"></i> В избранном'
+							: '<i class="far fa-bookmark"></i> В избранное'}
+					</button>
+				</div>
+			`;
 
-			// Создаем новый контейнер
+			// контейнер под VK
 			const vkContainer = document.createElement('div');
 
 			vkContainer.id = event.id;
 			vkContainer.style.margin = '0 auto';
 
-			body.appendChild(vkContainer);
+			body.insertAdjacentElement('beforeend', vkContainer);
 
 			if (window.VK && VK.Widgets && VK.Widgets.Post) {
 
@@ -1104,6 +1136,7 @@
 			}
 
         } else {
+
             body.innerHTML = `
                 <div class="vk-card-wrap">
                     <div class="vk-author-row">
@@ -1116,7 +1149,7 @@
                         <h3 style="margin-bottom:12px; color:#1e293b; font-size:1.3rem;">${event.title}</h3>
                         ${event.description}
                     </div>
-                    ${event.imageUrl ? `<<img loading="lazy" src="${event.imageUrl}" class="vk-img-main">` : ''}
+                    ${event.imageUrl ? `<img loading="lazy" src="${event.imageUrl}" class="vk-img-main">` : ''}
                 </div>
             `;
         }
@@ -1168,7 +1201,9 @@
 
 	function toggleFavorite(clickEvent, id) {
 
-		clickEvent.stopPropagation();
+		if (clickEvent) {
+			clickEvent.stopPropagation();
+		}
 
 		let favorites = getFavorites();
 
@@ -1197,6 +1232,20 @@
 
 		/* обновляем иконку без полной перерисовки */
 		const btn = document.querySelector(`.favorite-btn[data-id="${id}"]`);
+
+		if (btn) {
+
+			if (isFavorite(id)) {
+
+				btn.innerHTML =
+					'<i class="fas fa-bookmark"></i> В избранном';
+
+			} else {
+
+				btn.innerHTML =
+					'<i class="far fa-bookmark"></i> В избранное';
+			}
+		}
 
 		if (btn) {
 
@@ -1248,7 +1297,7 @@
 					 style="${e.imageUrl ? `background-image:url('${e.imageUrl}')` : ''}">
 
 					<button
-						onclick="toggleFavorite(event, '${e.id}')"
+						onclick="toggleFavorite(arguments[0], '${e.id}')"
 						style="
 							position:absolute;
 							top:14px;
