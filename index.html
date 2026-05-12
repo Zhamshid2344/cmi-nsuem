@@ -1118,41 +1118,6 @@
 					${event.imageUrl
 						? `<img loading="lazy" src="${event.imageUrl}" class="vk-img-main">`
 						: ''}
-
-					${
-						event.applyLink
-						? `
-						<a
-							href="${event.applyLink}"
-							target="_blank"
-							style="
-								display:flex;
-								align-items:center;
-								justify-content:center;
-
-								width:100%;
-								margin-top:20px;
-
-								background:#5993c5;
-								color:#ffffff;
-
-								padding:14px;
-								border-radius:14px;
-
-								text-decoration:none;
-								font-weight:700;
-
-								transition:0.2s;
-							"
-							onmouseover="this.style.opacity='0.9'"
-							onmouseout="this.style.opacity='1'"
-						>
-							Подать заявку
-						</a>
-						`
-						: ''
-					}
-
 				</div>
 			`;
 		}
