@@ -833,8 +833,9 @@
 					    date: row.date || row.Date || '',
 					    description: linkify(formattedDescription), 
                         rawTextDescription: rawDescription.replace(/<[^>]*>?/gm, ''), 
-					    imageUrl: row.imageUrl || row.ImageUrl || '',
-                        category: row.category || row.Category || row['Категория'] || '',
+						imageUrl: row.imageUrl || row.ImageUrl || '',
+						category: row.category || row.Category || row['Категория'] || '',
+						applyLink: row.applyLink || row.ApplyLink || '',
                         isOnMain: isOnMain
 					};
 
@@ -1043,13 +1044,12 @@
 		`).join('');
     }
 
-    function openModal(id) {
-        const event = eventsList.find(e => e.id === id);
-        const body = document.getElementById('modalBody');
-        
+	function openModal(id) {
+		const event = eventsList.find(e => e.id === id);
+		const body = document.getElementById('modalBody');
+
 		if (event.type === 'vk') {
 
-			// очищаем модалку
 			body.innerHTML = `
 				<div style="
 					display:flex;
@@ -1084,7 +1084,6 @@
 				</div>
 			`;
 
-			// контейнер под VK
 			const vkContainer = document.createElement('div');
 
 			vkContainer.id = event.id;
@@ -1122,40 +1121,73 @@
 
 				}, 100);
 
-			} else {
-
-				body.innerHTML = `
-					<div style="
-						padding:40px;
-						text-align:center;
-						color:#64748b;
-					">
-						VK API не загрузился
-					</div>
-				`;
 			}
 
-        } else {
+		} else {
 
-            body.innerHTML = `
-                <div class="vk-card-wrap">
-                    <div class="vk-author-row">
-                        <div>
-                            <div class="vk-name"></div>
-                            <div class="vk-subtext">${event.date}</div>
-                        </div>
-                    </div>
-                    <div class="vk-text">
-                        <h3 style="margin-bottom:12px; color:#1e293b; font-size:1.3rem;">${event.title}</h3>
-                        ${event.description}
-                    </div>
-                    ${event.imageUrl ? `<img loading="lazy" src="${event.imageUrl}" class="vk-img-main">` : ''}
-                </div>
-            `;
-        }
-        document.getElementById('eventModal').classList.add('active');
-        document.body.style.overflow = 'hidden'; // Убираем скролл страницы под модалкой
-    }
+			body.innerHTML = `
+				<div class="vk-card-wrap">
+
+					<div class="vk-author-row">
+						<div>
+							<div class="vk-name"></div>
+							<div class="vk-subtext">${event.date}</div>
+						</div>
+					</div>
+
+					<div class="vk-text">
+						<h3 style="margin-bottom:12px; color:#1e293b; font-size:1.3rem;">
+							${event.title}
+						</h3>
+
+						${event.description}
+					</div>
+
+					${event.imageUrl
+						? `<img loading="lazy" src="${event.imageUrl}" class="vk-img-main">`
+						: ''}
+
+					${
+						event.applyLink
+						? `
+						<a
+							href="${event.applyLink}"
+							target="_blank"
+							style="
+								display:flex;
+								align-items:center;
+								justify-content:center;
+
+								width:100%;
+								margin-top:20px;
+
+								background:#5993c5;
+								color:#ffffff;
+
+								padding:14px;
+								border-radius:14px;
+
+								text-decoration:none;
+								font-weight:700;
+
+								transition:0.2s;
+							"
+							onmouseover="this.style.opacity='0.9'"
+							onmouseout="this.style.opacity='1'"
+						>
+							Подать заявку
+						</a>
+						`
+						: ''
+					}
+
+				</div>
+			`;
+		}
+
+		document.getElementById('eventModal').classList.add('active');
+		document.body.style.overflow = 'hidden';
+	}
 
     function closeModalFunc() {
         document.getElementById('eventModal').classList.remove('active');
@@ -1201,9 +1233,7 @@
 
 	function toggleFavorite(clickEvent, id) {
 
-		if (clickEvent) {
-			clickEvent.stopPropagation();
-		}
+		clickEvent.stopPropagation();
 
 		let favorites = getFavorites();
 
@@ -1232,20 +1262,6 @@
 
 		/* обновляем иконку без полной перерисовки */
 		const btn = document.querySelector(`.favorite-btn[data-id="${id}"]`);
-
-		if (btn) {
-
-			if (isFavorite(id)) {
-
-				btn.innerHTML =
-					'<i class="fas fa-bookmark"></i> В избранном';
-
-			} else {
-
-				btn.innerHTML =
-					'<i class="far fa-bookmark"></i> В избранное';
-			}
-		}
 
 		if (btn) {
 
@@ -1297,7 +1313,7 @@
 					 style="${e.imageUrl ? `background-image:url('${e.imageUrl}')` : ''}">
 
 					<button
-						onclick="toggleFavorite(arguments[0], '${e.id}')"
+						onclick="toggleFavorite(event, '${e.id}')"
 						style="
 							position:absolute;
 							top:14px;
