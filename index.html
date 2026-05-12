@@ -765,7 +765,11 @@
 <div id="eventModal" class="modal">
     <div class="modal-content">
         <div id="modalBody"></div>
-        <button class="footer-btn" onclick="closeModalFunc()">Закрыть окно</button>
+		<div id="modalActions"></div>
+
+		<button class="footer-btn" onclick="closeModalFunc()">
+			Закрыть окно
+		</button>
     </div>
 </div>
 
@@ -1050,39 +1054,7 @@
 
 		if (event.type === 'vk') {
 
-			body.innerHTML = `
-				<div style="
-					display:flex;
-					justify-content:flex-end;
-					margin-bottom:12px;
-				">
-					<button
-						onclick="toggleFavorite(event, '${event.id}')"
-						class="favorite-btn"
-						data-id="${event.id}"
-						style="
-							height:42px;
-							padding:0 16px;
-							border:none;
-							border-radius:14px;
-							background:#f0f6fa;
-							cursor:pointer;
-							box-shadow:0 4px 12px rgba(0,0,0,0.08);
-							font-size:0.95rem;
-							color:#5993c5;
-							font-weight:700;
-							display:flex;
-							align-items:center;
-							justify-content:center;
-							gap:8px;
-						"
-					>
-						${isFavorite(event.id)
-							? '<i class="fas fa-bookmark"></i> В избранном'
-							: '<i class="far fa-bookmark"></i> В избранное'}
-					</button>
-				</div>
-			`;
+			body.innerHTML = ``;
 
 			const vkContainer = document.createElement('div');
 
@@ -1183,6 +1155,38 @@
 
 				</div>
 			`;
+		}
+		
+		const modalActions = document.getElementById('modalActions');
+
+		if (event.applyLink && event.applyLink.trim() !== '') {
+
+			modalActions.innerHTML = `
+				<a
+					href="${event.applyLink}"
+					target="_blank"
+					class="footer-btn"
+					style="
+						display:flex;
+						justify-content:center;
+						align-items:center;
+
+						text-decoration:none;
+
+						background:#5993c5;
+						color:white;
+
+						margin-top:20px;
+						margin-bottom:12px;
+					"
+				>
+					Подать заявку
+				</a>
+			`;
+
+		} else {
+
+			modalActions.innerHTML = '';
 		}
 
 		document.getElementById('eventModal').classList.add('active');
