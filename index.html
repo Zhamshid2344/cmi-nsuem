@@ -921,37 +921,93 @@
         const event = eventsList.find(e => e.id === id);
         const body = document.getElementById('modalBody');
         
-        if (event.type === 'vk') {
-            body.innerHTML = `<div id="${event.id}" style="margin: 0 auto;"></div>`;
-            if (window.VK && VK.Widgets && VK.Widgets.Post) {
-                setTimeout(() => { VK.Widgets.Post(event.id, event.vkParams.ownerId, event.vkParams.postId, event.vkParams.hash); }, 100);
-            }
-        } else {
-            body.innerHTML = `
-                <div class="vk-card-wrap">
-                    <div class="vk-author-row">
-                        <div class="vk-ava"><i class="fas fa-university"></i></div>
-                        <div>
-                            <div class="vk-name"></div>
-                            <div class="vk-subtext">${event.date}</div>
-                        </div>
-                    </div>
-                    <div class="vk-text">
-                        <h3 style="margin-bottom:12px; color:#1e293b; font-size:1.3rem;">${event.title}</h3>
-                        ${event.description}
-                    </div>
-                    ${event.imageUrl ? `<img src="${event.imageUrl}" class="vk-img-main">` : ''}
+		if (event.type === 'vk') {
+
+			body.innerHTML = `
+				<div>
+					<div id="${event.id}" style="margin:0 auto;"></div>
+
 					${event.applyLink ? `
-					<a 
-						href="${event.applyLink}"
-						target="_blank"
-						class="apply-btn"
-					>
-						Подать заявку
-					</a>
-				` : ''}
-                </div>
-            `;
+						<a
+							href="${event.applyLink}"
+							target="_blank"
+							class="apply-btn"
+							style="margin-top:20px;"
+						>
+							<i class="fas fa-paper-plane"></i>
+
+							<span style="margin-left:8px;">
+								Подать заявку
+							</span>
+						</a>
+					` : ''}
+				</div>
+			`;
+
+			if (window.VK && VK.Widgets && VK.Widgets.Post) {
+
+				setTimeout(() => {
+
+					VK.Widgets.Post(
+						event.id,
+						event.vkParams.ownerId,
+						event.vkParams.postId,
+						event.vkParams.hash
+					);
+
+				}, 100);
+			}
+
+		} else {
+			body.innerHTML = `
+				<div class="vk-card-wrap">
+
+					<div class="vk-author-row">
+						<div class="vk-ava">
+							<i class="fas fa-university"></i>
+						</div>
+
+						<div>
+							<div class="vk-name"></div>
+							<div class="vk-subtext">${event.date}</div>
+						</div>
+					</div>
+
+					<div class="vk-text">
+						<h3 style="
+							margin-bottom:12px;
+							color:#1e293b;
+							font-size:1.3rem;
+						">
+							${event.title}
+						</h3>
+
+						${event.description}
+					</div>
+
+					${event.imageUrl
+						? `<img src="${event.imageUrl}" class="vk-img-main">`
+						: ''
+					}
+
+					${event.applyLink
+						? `
+						<a
+							href="${event.applyLink}"
+							target="_blank"
+							class="apply-btn"
+						>
+							<i class="fas fa-paper-plane"></i>
+							<span style="margin-left:8px;">
+								Подать заявку
+							</span>
+						</a>
+						`
+						: ''
+					}
+
+				</div>
+			`;
         }
         document.getElementById('eventModal').classList.add('active');
         document.body.style.overflow = 'hidden'; // Убираем скролл страницы под модалкой
