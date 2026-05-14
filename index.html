@@ -1030,7 +1030,6 @@
 		initSlider();
 	}
 
-    // --- Логика Слайдера с красивым появлением ---
     function initSlider() {
         sliderEvents = eventsList.filter(e => e.isOnMain);
         const sliderWrapper = document.getElementById('sliderWrapper');
@@ -1039,7 +1038,6 @@
         const track = document.getElementById('sliderTrack');
         const dotsContainer = document.getElementById('sliderDots');
 
-        // Если важных событий нет -> плавно схлопываем контейнер
         if (sliderEvents.length === 0) {
             sliderWrapper.style.opacity = '0';
             sliderWrapper.style.height = '0';
@@ -1048,7 +1046,6 @@
             return;
         }
 
-        // Генерируем слайды
         track.innerHTML = sliderEvents.map(e => {
             let bgImage = e.imageUrl ? e.imageUrl : 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="%231e293b"/></svg>';
             return `
@@ -1066,13 +1063,12 @@
             `<div class="dot ${i === 0 ? 'active' : ''}" onclick="goToSlide(${i})"></div>`
         ).join('');
 
-        // Плавная смена скелетона на готовый слайдер
         setTimeout(() => {
             skeleton.style.opacity = '0';
             sliderContainer.classList.add('loaded');
             setTimeout(() => { skeleton.style.display = 'none'; }, 500);
             startSlideTimer();
-        }, 600); // Даем чуть-чуть времени, чтобы картинки успели подгрузиться
+        }, 600);
     }
 
     function moveSlide(direction) {
@@ -1113,7 +1109,6 @@
 
     function resetSlideTimer() { startSlideTimer(); }
 
-    // --- Остальная логика ---
     function generateFilters() {
         const filterContainer = document.getElementById('filtersContainer');
         if (!filterContainer) return;
@@ -1391,10 +1386,9 @@
     function closeModalFunc() {
         document.getElementById('eventModal').classList.remove('active');
         document.getElementById('modalBody').innerHTML = '';
-        document.body.style.overflow = ''; // Возвращаем скролл
+        document.body.style.overflow = '';
     }
 
-    // Закрытие по клику вне модалки
     document.getElementById('eventModal').addEventListener('click', function(e) {
         if (e.target === this) closeModalFunc();
     });
