@@ -804,69 +804,213 @@
 
     const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRyGHknDr0qNORagEw04nkEy2dK3TQsVw6JHIIpFJxqBEGIBX8q81MSs2rIKfyTg418-fPggW27wmUa/pub?output=csv';
 
-    function loadEventsFromSheet() {
-        Papa.parse(CSV_URL, {
-            download: true,
-            header: true, 
-            skipEmptyLines: true, 
-            complete: function(results) {
-                const data = results.data;
-                
-                eventsList = data.map((row, index) => {
-                    if (!row.title && !row.Title) return null;
+    async function loadEventsFromSheet() {
 
-					let rawDescription = row.description || row.Description || '';
+		const CACHE_KEY = 'events_cache_v1';
+		const CACHE_TIME_KEY = 'events_cache_time_v1';
 
-					rawDescription = escapeHtml(rawDescription);
+		const CACHE_LIFETIME = 1000 * 60 * 10; // 10 минут
 
-					let formattedDescription = rawDescription.replace(/\n/g, '<br>');
-					
-                    let onMainVal = (row['На главном'] || row.on_main || '').toString().toLowerCase().trim();
-                    let isOnMain = ['да', 'yes', '1', '+', 'true'].includes(onMainVal);
+		const cachedData = localStorage.getItem(CACHE_KEY);
+		const cacheTime = localStorage.getItem(CACHE_TIME_KEY);
 
-					let eventObj = {
-					    id: "event_" + index,
-						
-						contentHash: (
-							row.title ||
-							row.Title ||
-							''
-						).trim(),
-												
-					    type: (row.type && row.type.trim().toLowerCase() === 'vk') ? 'vk' : 'standard',
-					    title: row.title || row.Title || 'Без названия',
-					    date: row.date || row.Date || '',
-					    description: linkify(formattedDescription), 
-                        rawTextDescription: rawDescription.replace(/<[^>]*>?/gm, ''), 
-						imageUrl: row.imageUrl || row.ImageUrl || '',
-						category: row.category || row.Category || row['Категория'] || '',
-						applyLink: row.applyLink || row.ApplyLink || '',
-                        isOnMain: isOnMain
-					};
+		/* если кэш свежий — используем его */
+		if (cachedData && cacheTime) {
 
-                    if (eventObj.type === 'vk') {
-                        eventObj.id = `vk_post_${index}`;
-                        eventObj.vkParams = {
-                            container: eventObj.id,
-                            ownerId: parseInt(row.vkOwnerId),
-                            postId: parseInt(row.vkPostId),
-                            hash: row.vkHash
-                        };
-                    }
-                    return eventObj;
-                }).filter(e => e !== null);
+			const isFresh =
+				(Date.now() - Number(cacheTime)) < CACHE_LIFETIME;
 
-                generateFilters(); 
-                renderEvents();
-				renderFavorites();
-				initSlider();     
-            },
-            error: function() {
-                document.getElementById('eventsGrid').innerHTML = '<div style="color:#ef4444; text-align:center; width:100%; padding:20px;">Не удалось загрузить данные. Проверьте ссылку на таблицу.</div>';
-                document.getElementById('sliderWrapper').style.display = 'none';
-            }
-        });
-    }
+			if (isFresh) {
+
+				try {
+
+					const parsed = JSON.parse(cachedData);
+
+					processEvents(parsed);
+
+					console.log('Загружено из cache');
+
+					return;
+
+				} catch(e) {
+					console.error('Ошибка cache', e);
+				}
+			}
+		}
+
+		/* таймаут загрузки */
+		const controller = new AbortController();
+
+		const timeout = setTimeout(() => {
+			controller.abort();
+		}, 8000);
+
+		try {
+
+			const response = await fetch(CSV_URL, {
+				signal: controller.signal,
+				cache: 'force-cache'
+			});
+
+			clearTimeout(timeout);
+
+			const csvText = await response.text();
+
+			Papa.parse(csvText, {
+
+				header: true,
+				skipEmptyLines: true,
+
+				complete: function(results) {
+
+					localStorage.setItem(
+						CACHE_KEY,
+						JSON.stringify(results.data)
+					);
+
+					localStorage.setItem(
+						CACHE_TIME_KEY,
+						Date.now().toString()
+					);
+
+					processEvents(results.data);
+				}
+			});
+
+		} catch(err) {
+
+			console.error('Ошибка загрузки CSV:', err);
+
+			/* fallback на старый cache */
+			if (cachedData) {
+
+				try {
+
+					processEvents(JSON.parse(cachedData));
+
+					return;
+
+				} catch(e) {}
+			}
+
+			document.getElementById('eventsGrid').innerHTML = `
+				<div style="
+					color:#ef4444;
+					text-align:center;
+					width:100%;
+					padding:40px;
+				">
+					Не удалось загрузить данные
+				</div>
+			`;
+		}
+	}
+
+	function processEvents(data) {
+
+		eventsList = data.map((row, index) => {
+
+			if (!row.title && !row.Title) return null;
+
+			let rawDescription =
+				row.description ||
+				row.Description ||
+				'';
+
+			rawDescription = escapeHtml(rawDescription);
+
+			let formattedDescription =
+				rawDescription.replace(/\n/g, '<br>');
+
+			let onMainVal =
+				(row['На главном'] || row.on_main || '')
+				.toString()
+				.toLowerCase()
+				.trim();
+
+			let isOnMain =
+				['да', 'yes', '1', '+', 'true']
+				.includes(onMainVal);
+
+			let eventObj = {
+
+				id: "event_" + index,
+
+				contentHash: (
+					row.title ||
+					row.Title ||
+					''
+				).trim(),
+
+				type:
+					(row.type &&
+					 row.type.trim().toLowerCase() === 'vk')
+						? 'vk'
+						: 'standard',
+
+				title:
+					row.title ||
+					row.Title ||
+					'Без названия',
+
+				date:
+					row.date ||
+					row.Date ||
+					'',
+
+				description:
+					linkify(formattedDescription),
+
+				rawTextDescription:
+					rawDescription.replace(/<[^>]*>?/gm, ''),
+
+				imageUrl:
+					row.imageUrl ||
+					row.ImageUrl ||
+					'',
+
+				category:
+					row.category ||
+					row.Category ||
+					row['Категория'] ||
+					'',
+
+				applyLink:
+					row.applyLink ||
+					row.ApplyLink ||
+					'',
+
+				isOnMain
+			};
+
+			if (eventObj.type === 'vk') {
+
+				eventObj.id = `vk_post_${index}`;
+
+				eventObj.vkParams = {
+
+					container: eventObj.id,
+
+					ownerId: parseInt(row.vkOwnerId),
+
+					postId: parseInt(row.vkPostId),
+
+					hash: row.vkHash
+				};
+			}
+
+			return eventObj;
+
+		}).filter(e => e !== null);
+
+		generateFilters();
+
+		renderEvents();
+
+		renderFavorites();
+
+		initSlider();
+	}
 
     // --- Логика Слайдера с красивым появлением ---
     function initSlider() {
@@ -935,10 +1079,19 @@
         });
     }
 
-    function startSlideTimer() {
-        clearInterval(slideInterval);
-        slideInterval = setInterval(() => { moveSlide(1); }, 6000); 
-    }
+	function startSlideTimer() {
+
+		if (slideInterval) {
+			clearInterval(slideInterval);
+			window.addEventListener('beforeunload', () => {
+				clearInterval(slideInterval);
+			});
+		}
+
+		slideInterval = setInterval(() => {
+			moveSlide(1);
+		}, 6000);
+	}
 
     function resetSlideTimer() { startSlideTimer(); }
 
@@ -970,7 +1123,6 @@
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 currentFilter = btn.dataset.filter;
-                renderEvents();
             });
         });
     }
@@ -1030,7 +1182,30 @@
 				</div>
 
 				<div onclick="openModal('${e.id}')">
-					<div class="event-img-wrapper" style="${e.imageUrl ? `background-image: url('${e.imageUrl}');` : ''}">
+				<div class="event-img-wrapper">
+
+					${
+						e.imageUrl
+						? `
+							<img
+								src="${safeImageUrl(e.imageUrl)}"
+								loading="lazy"
+								decoding="async"
+								style="
+									width:100%;
+									height:100%;
+									object-fit:cover;
+								"
+								onerror="this.src='fallback.webp'"
+							>
+						`
+						: `
+							<i class="fas fa-calendar-alt"
+							   style="font-size:3rem;
+							   color:rgba(255,255,255,0.5);">
+							</i>
+						`
+					}
 						${!e.imageUrl ? '<i class="fas fa-calendar-alt" style="font-size:3rem; color:rgba(255,255,255,0.5);"></i>' : ''}
 						${e.type === 'vk' ? '<div class="vk-badge"><i class="fab fa-vk"></i></div>' : ''}
 					</div>
@@ -1048,6 +1223,24 @@
 			</div>
 		`).join('');
     }
+	
+	function safeImageUrl(url) {
+
+		try {
+
+			const parsed = new URL(url);
+
+			if (
+				parsed.protocol === 'http:' ||
+				parsed.protocol === 'https:'
+			) {
+				return url;
+			}
+
+		} catch(e) {}
+
+		return '';
+	}
 
 	function openModal(id) {
 		const event = eventsList.find(e => e.id === id);
@@ -1129,7 +1322,7 @@
 
 			modalActions.innerHTML = `
 				<a
-					href="${event.applyLink}"
+					href="${safeUrl(event.applyLink)}"
 					target="_blank"
 					class="footer-btn"
 					style="
@@ -1157,6 +1350,24 @@
 
 		document.getElementById('eventModal').classList.add('active');
 		document.body.style.overflow = 'hidden';
+	}
+	
+	function safeUrl(url) {
+
+		try {
+
+			const parsed = new URL(url);
+
+			if (
+				parsed.protocol === 'http:' ||
+				parsed.protocol === 'https:'
+			) {
+				return url;
+			}
+
+		} catch(e) {}
+
+		return '#';
 	}
 
     function closeModalFunc() {
