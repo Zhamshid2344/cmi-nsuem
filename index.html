@@ -827,12 +827,11 @@
 		const CACHE_KEY = 'events_cache_v1';
 		const CACHE_TIME_KEY = 'events_cache_time_v1';
 
-		const CACHE_LIFETIME = 1000 * 60 * 10; // 10 минут
+		const CACHE_LIFETIME = 1000 * 60 * 30; // 30 минут
 
 		const cachedData = localStorage.getItem(CACHE_KEY);
 		const cacheTime = localStorage.getItem(CACHE_TIME_KEY);
 
-		/* если кэш свежий — используем его */
 		if (cachedData && cacheTime) {
 
 			const isFresh =
